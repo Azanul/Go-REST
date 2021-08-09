@@ -29,9 +29,9 @@ func handleRequests() {
 	fmt.Println("Served at 10000")
 
 	myRouter.HandleFunc("/", homePage)
-	myRouter.HandleFunc("/all", returnAllArticles)
-	myRouter.HandleFunc("/article/{id}", returnOneArticle)
-	myRouter.HandleFunc("/create", createNewArticle).Methods("POST")
+	myRouter.HandleFunc("/article", returnAllArticles).Methods("GET")
+	myRouter.HandleFunc("/article/{id}", returnOneArticle).Methods("GET")
+	myRouter.HandleFunc("/article", createNewArticle).Methods("POST")
 	myRouter.HandleFunc("/article/{id}", deleteArticle).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
@@ -73,4 +73,13 @@ func deleteArticle(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Endpoint Hit: deleteArticle")
 	delete(Articles, key)
+}
+
+func updateArticle(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+	var article Article
+	json.Unmarshal(body, &article)
+	Articles[strconv.Itoa(len(Articles))] = article
+	fmt.Println("Endpoint Hit: updateArticle")
+	fmt.Println(Articles)
 }
